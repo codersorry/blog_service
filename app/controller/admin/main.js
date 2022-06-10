@@ -15,15 +15,15 @@ class MainController extends Controller {
     if (res.length > 0) {
       const openId = new Date().getTime();
       this.ctx.session.openId = { openId };
-      this.ctx.body = { data: 'success', openId, result: true };
+      this.ctx.body = { data: { openId }, message: '登录成功', result: true };
     } else {
-      this.ctx.body = { data: 'failed', result: false };
+      this.ctx.body = { data: {}, message: '登录失败', result: false };
     }
   }
 
   async getTypeInfo() {
     const resType = await this.app.mysql.select('type');
-    this.ctx.body = { data: resType, result: true };
+    this.ctx.body = { data: resType, message: '获取文章类型成功', result: true };
 
   }
 
@@ -34,31 +34,48 @@ class MainController extends Controller {
     const result = await this.app.mysql.insert('article', tmpArticle);
     const insertSuccess = result.affectedRows === 1;
     const insertId = result.insertId;
-
-    this.ctx.body = {
-      result: insertSuccess,
-      insertId,
-    };
+    console.log(insertSuccess, '----');
+    if (insertSuccess) {
+      this.ctx.body = {
+        result: insertSuccess,
+        insertId,
+      };
+    } else {
+      this.ctx.body = {
+        result: insertSuccess,
+        data: { insertId },
+        message: '添加文章成功'
+        ,
+      };
+    }
   }
 
   // 修改文章
   async updateArticle() {
     const tmpArticle = this.ctx.request.body;
-
     const result = await this.app.mysql.update('article', tmpArticle);
     const updateSuccess = result.affectedRows === 1;
-    console.log(updateSuccess);
-    this.ctx.body = {
-      result: updateSuccess,
-    };
+    if (updateSuccess) {
+      this.ctx.body = {
+        data: {},
+        message: '修改文章成功',
+        result: updateSuccess,
+      };
+    } else {
+      this.ctx.body = {
+        data: {},
+        message: '修改文章失败',
+        result: updateSuccess,
+      };
+    }
+
   }
 
   // 获得文章列表
   async getArticleList() {
-
     const sql = 'SELECT article.id as id,article.title as title,article.introduce as introduce,article.addTime as addTime,type.typeName as typeName,article.view_count as view_count FROM article LEFT JOIN type ON article.type_id = type.Id ORDER BY article.id DESC';
     const resList = await this.app.mysql.query(sql);
-    this.ctx.body = { list: resList };
+    this.ctx.body = { data: { list: resList }, result: true, message: '获取文章列表成功' };
 
   }
 
@@ -67,9 +84,9 @@ class MainController extends Controller {
     const id = this.ctx.params.id;
     const res = await this.app.mysql.delete('article', { id });
     if (res.affectedRows === 1) {
-      this.ctx.body = { data: res, result: true };
+      this.ctx.body = { data: res, result: true, message: '删除文章成功' };
     } else {
-      this.ctx.body = { data: res, result: false };
+      this.ctx.body = { data: res, result: false, message: '删除文章失败' };
 
     }
   }
@@ -80,9 +97,9 @@ class MainController extends Controller {
     const sql = `SELECT article.id as id,article.title as title,article.introduce as introduce,article.article_content as article_content,article.addTime as addTime,article.view_count as view_count,typeName as typeName,type.id as typeId FROM article LEFT JOIN type ON article.type_id = type.id WHERE article.id=${id}`;
     const res = await this.app.mysql.query(sql);
     if (res.length >= 1) {
-      this.ctx.body = { data: res, result: true };
+      this.ctx.body = { data: res, result: true, message: '获取文章详情成功' };
     } else {
-      this.ctx.body = { data: res, result: false };
+      this.ctx.body = { data: res, result: false, message: '获取文章详情失败' };
     }
   }
 
