@@ -10,7 +10,7 @@ class HomeController extends Controller {
 
   // 获取文章列表
   async getArticleList() {
-    const sql = 'SELECT article.id as id,article.title as title,article.introduce as introduce,article.addTime as addTime,article.view_count as view_count,typeName as typeName FROM article LEFT JOIN type ON article.type_id = type.id';
+    const sql = 'SELECT article.article_id as article_id,article.article_title as article_title,article.article_introduce as article_introduce,article.publish_time as publish_time,article.view_count as view_count,type_name as type_name FROM article LEFT JOIN type ON article.type_id = type.type_id';
     const results = await this.app.mysql.query(sql);
     this.ctx.body = { data: results, message: '获取文章列表成功', result: true };
   }
@@ -18,7 +18,7 @@ class HomeController extends Controller {
   // 通过id获取文章详情内容
   async getArticleById() {
     const id = this.ctx.params.id;
-    const sql = `SELECT article.id as id,article.title as title,article.introduce as introduce,article.article_content as article_content,article.addTime as addTime,article.view_count as view_count,typeName as typeName,type.id as typeId FROM article LEFT JOIN type ON article.type_id = type.id WHERE article.id=${id}`;
+    const sql = `SELECT article.article_id as article_id,article.article_title as article_title,article.article_introduce as article_introduce,article.article_content as article_content,article.publish_time as publish_time,article.view_count as view_count,type_name as type_name,type.type_id as type_id FROM article LEFT JOIN type ON article.type_id = type.type_id WHERE article.article_id=${id}`;
     const results = await this.app.mysql.query(sql);
     this.ctx.body = { data: results, message: '获取文章详情成功', result: true };
   }
@@ -32,7 +32,7 @@ class HomeController extends Controller {
   // 根据类别id获取文章列表
   async getArticleListByTypeId() {
     const id = this.ctx.params.id;
-    const sql = `SELECT article.id as id,article.title as title,article.introduce as introduce,article.addTime as addTime,article.view_count as view_count,typeName as typeName FROM article LEFT JOIN type ON article.type_id = type.id WHERE type_id=${id}`;
+    const sql = `SELECT article.article_id as article_id,article.article_title as article_title,article.article_introduce as article_introduce,article.publish_time as publish_time,article.view_count as view_count,type_name as type_name FROM article LEFT JOIN type ON article.type_id = type.type_id WHERE article.type_id=${id}`;
     const results = await this.app.mysql.query(sql);
     this.ctx.body = { data: results, message: '根据类别获取文章列表成功', result: true };
   }
