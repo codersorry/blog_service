@@ -67,6 +67,15 @@ module.exports = appInfo => {
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',
   };
 
+  config.myEmail = {
+    host: 'smtp.163.com',
+    port: '456',
+    auth: {
+      user: 'darry5877@163.com',
+      pass: 'MFTYJCQRVKCQKAJK',
+    },
+  };
+
   return {
     ...config,
     ...userConfig,
